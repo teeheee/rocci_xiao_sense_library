@@ -1,0 +1,26 @@
+{
+  "name": "rocci_xiao_sense_library",
+  "version": "0.1.0",
+  "description": "Camera capture and serial streaming library for the Seeed XIAO ESP32S3 Sense.",
+  "keywords": [
+    "camera",
+    "esp32",
+    "xiao",
+    "serial"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/teeheee/rocci_xiao_sense_library.git"
+  },
+  "authors": [
+    {
+      "name": "teeheee"
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif32",
+  "build": {
+    "srcDir": "src",
+    "includeDir": "include"
+  }
+}
