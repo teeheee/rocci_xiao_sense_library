@@ -5,6 +5,7 @@
 
 void rocci_cam_serial_init(void);
 void rocci_cam_serial_process(void);
+bool rocci_cam_serial_is_halted(void);
 void rocci_cam_serial_process_image(camera_fb_t *fb);
 void send_image_to_serial(camera_fb_t *fb);
 void send_to_terminal(const char *message, ...);

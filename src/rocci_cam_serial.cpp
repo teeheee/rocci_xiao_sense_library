@@ -5,6 +5,7 @@
 #define START_CODE "\xDE\xAD\xBE\xAF"
 
 static bool camera_streaming_flag = false;
+static bool camera_halted_flag = false;
 static bool quite_mode_flag = false;
 static bool send_next_image = false;
 
@@ -34,9 +35,21 @@ void rocci_cam_serial_process(void)
                 send_to_terminal("Failed to allocate memory for image processing");
                 return;
             }
-            Serial.readBytes((uint8_t*)fb.buf, fb.len);
+            size_t bytes_read = Serial.readBytes((uint8_t*)fb.buf, fb.len);
+            if (bytes_read != fb.len) {
+                send_to_terminal("Incomplete process frame: received %u of %u bytes", bytes_read, fb.len);
+                free(fb.buf);
+                return;
+            }
             rocci_cam_process_image(&fb);
+            send_to_terminal("Processed frame: %dx%d", fb.width, fb.height);
             free(fb.buf);
+        } else if (command == "halt") {
+            camera_halted_flag = true;
+            send_to_terminal("Camera halted; waiting for commands");
+        } else if (command == "go") {
+            camera_halted_flag = false;
+            send_to_terminal("Camera resumed");
         } else if (command == "start") {
             send_to_terminal("Starting camera streaming");
             camera_streaming_flag = true;
@@ -53,6 +66,11 @@ void rocci_cam_serial_process(void)
             send_to_terminal("Unknown command: %s\n", command.c_str());
         }
     }
+}
+
+bool rocci_cam_serial_is_halted(void)
+{
+    return camera_halted_flag;
 }
 
 void rocci_cam_serial_process_image(camera_fb_t *fb)

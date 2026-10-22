@@ -49,6 +49,9 @@ void rocci_cam_init(void)
 void rocci_cam_process(void)
 {
     rocci_cam_serial_process();
+  if (rocci_cam_serial_is_halted()) {
+    return;
+  }
     camera_fb_t *fb = esp_camera_fb_get();
     if (!fb) {
         send_to_terminal("Camera capture failed");
