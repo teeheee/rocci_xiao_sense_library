@@ -75,11 +75,11 @@ bool rocci_cam_serial_is_halted(void)
 
 void rocci_cam_serial_process_image(camera_fb_t *fb)
 {
-    if (camera_streaming_flag) {
-        send_image_to_serial(fb);
-    } else if (send_next_image) {
+    if (send_next_image) {
         send_image_to_serial(fb);
         send_next_image = false;
+    } else if (camera_streaming_flag) {
+        send_image_to_serial(fb);
     }
 }
 
