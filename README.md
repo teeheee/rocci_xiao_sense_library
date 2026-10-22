@@ -8,7 +8,7 @@ Add the GitHub repository to a PlatformIO project's `platformio.ini`:
 
 ```ini
 lib_deps =
-    https://github.com/teeheee/rocci_xiao_sense_library.git#v0.2.0
+    https://github.com/teeheee/rocci_xiao_sense_library.git#v0.3.0
 ```
 
 The ESP32 Arduino framework provides the `esp_camera` API used by this library.
@@ -40,3 +40,29 @@ void loop()
 Image packets include frame width, height, pixel format, and payload length. Drawing helpers `draw_box`, `draw_point`, and `draw_line` emit overlay packets on the same serial connection.
 
 The current pin configuration and default camera model target the XIAO ESP32S3 Sense.
+
+## I2C slave
+
+The XIAO ESP32S3 Sense can expose a separate I2C slave bus while the camera uses GPIO 40/39 for its sensor bus. The library defaults to slave address `0x55`, SDA GPIO 5 (XIAO D4), SCL GPIO 6 (XIAO D5), and 100 kHz. Set the response whenever the value to be read by the master changes; response payloads are limited to 128 bytes.
+
+```cpp
+#include <rocci_cam_i2c.h>
+
+uint8_t measurement = 0;
+
+void on_master_write(const uint8_t *data, size_t length)
+{
+    // Consume the received bytes during this callback.
+}
+
+void setup()
+{
+    rocci_cam_i2c_on_receive(on_master_write);
+    if (!rocci_cam_i2c_slave_begin()) {
+        // Handle I2C initialization failure.
+    }
+    rocci_cam_i2c_set_response(&measurement, sizeof(measurement));
+}
+```
+
+The master reads the current response with a normal I2C read transaction and writes are delivered to the registered callback. The receive callback's data pointer is valid only until the callback returns. See `examples/i2c_slave_camera` for a camera-derived brightness response.

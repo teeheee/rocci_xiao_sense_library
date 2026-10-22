@@ -1,6 +1,6 @@
 {
   "name": "rocci_xiao_sense_library",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Camera capture and serial streaming library for the Seeed XIAO ESP32S3 Sense.",
   "keywords": [
     "camera",

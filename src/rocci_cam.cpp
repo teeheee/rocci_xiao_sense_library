@@ -80,3 +80,47 @@ void rocci_cam_publish_i2c_result(uint8_t reg, uint8_t value)
 {
     send_to_terminal("I2C Result - Register: 0x%02X, Value: 0x%02X", reg, value);
 }
+
+inline uint8_t get_Y(camera_fb_t* fb, int x, int y)
+{
+    if (x < 0 || y < 0) return 0;
+    if (x >= fb->width || y >= fb->height)
+        return 0;
+    int offset = (y * fb->width + x) * 2;
+    return fb->buf[offset];
+}
+
+inline uint8_t get_U(camera_fb_t* fb, int x, int y)
+{
+    if (x < 0 || y < 0) return 0;
+    if (x >= fb->width || y >= fb->height)
+        return 0;
+    int pair = (x / 2);  // group of 2 pixels
+    int offset = (y * fb->width + pair * 2) * 2;
+    return fb->buf[offset + 1];
+}
+
+inline uint8_t get_V(camera_fb_t* fb, int x, int y)
+{
+    if (x < 0 || y < 0) return 0;
+    if (x >= fb->width || y >= fb->height)
+        return 0;
+    int pair = (x / 2);
+    int offset = (y * fb->width + pair * 2) * 2;
+    return fb->buf[offset + 3];
+}
+
+inline uint8_t get_R(camera_fb_t* fb, int x, int y)
+{
+    return fb->buf[(y * fb->width + x) * 3];
+}
+
+inline uint8_t get_G(camera_fb_t* fb, int x, int y)
+{
+    return fb->buf[(y * fb->width + x) * 3 + 1];
+}
+
+inline uint8_t get_B(camera_fb_t* fb, int x, int y)
+{
+    return fb->buf[(y * fb->width + x) * 3 + 2];
+}
